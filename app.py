@@ -232,3 +232,45 @@ class Booking(db.Model):
             'total_price': self.total_price,
             'status': self.status
         }
+    
+
+# ----------------------------------------------------------
+# 4. REVIEW MODEL - Stores user reviews and ratings
+# ----------------------------------------------------------
+class Review(db.Model):
+    """
+    Review Model - Represents user reviews for spaces
+    
+    Allows users to:
+    - Rate spaces (1-5 stars)
+    - Leave written comments about their experience
+    """
+    # Define the table name in the database
+    __tablename__ = 'reviews'
+    
+    # Primary key - unique identifier for each review
+    id = db.Column(db.Integer, primary_key=True)
+    
+    # Foreign key to users table - who wrote the review
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    
+    # Foreign key to spaces table - which space is being reviewed
+    space_id = db.Column(db.Integer, db.ForeignKey('spaces.id'), nullable=False)
+    
+    # Star rating from 1 to 5
+    rating = db.Column(db.Integer, nullable=False)
+    
+    # Written review/feedback (optional)
+    comment = db.Column(db.Text)
+    
+    def to_dict(self):
+        """
+        Convert Review object to dictionary for JSON serialization
+        """
+        return {
+            'id': self.id,
+            'user_id': self.user_id,
+            'space_id': self.space_id,
+            'rating': self.rating,
+            'comment': self.comment
+        }
