@@ -274,3 +274,33 @@ class Review(db.Model):
             'rating': self.rating,
             'comment': self.comment
         }
+
+
+# ==================== API ROUTES ====================
+# Routes define the API endpoints that the frontend can call
+# Each route handles a specific HTTP method (GET, POST, PUT, DELETE)
+
+# ----------------------------------------------------------
+# HOME ROUTE - API Information
+# ----------------------------------------------------------
+@app.get('/')
+def index():
+    """
+    Home Route - Returns API information and available endpoints
+    
+    This is the root endpoint that provides documentation about
+    the API and lists all available endpoints for developers.
+    
+    Returns:
+        JSON object with API info and endpoint list
+    """
+    return jsonify({
+        "message": "Spaces for Rent API",
+        "version": "1.0",
+        "endpoints": {
+            "spaces": "/api/spaces",
+            "users": "/api/users",
+            "bookings": "/api/bookings",
+            "reviews": "/api/reviews"
+        }
+    })
