@@ -816,3 +816,19 @@ def create_tables():
             db.session.commit()
             # Print confirmation message
             print("✅ Sample spaces added")
+
+# ==================== APPLICATION ENTRY POINT ====================
+# This section runs when the script is executed directly (not imported)
+
+if __name__ == '__main__':
+    # Initialize the database tables and seed data
+    create_tables()
+    
+    # Get the port from environment variable or use default 5555
+    # This allows deployment platforms to set the port dynamically
+    port = int(os.getenv('PORT', 5555))
+    
+    # Start the Flask development server
+    # debug=True enables auto-reload and detailed error pages
+    # In production, use a WSGI server like gunicorn instead
+    app.run(port=port, debug=True)
