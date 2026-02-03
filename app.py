@@ -521,3 +521,167 @@ def create_user():
     
     # Return created user with 201 status
     return jsonify(new_user.to_dict()), 201
+
+
+# ----------------------------------------------------------
+# BOOKINGS ROUTES - Reservation management endpoints
+# ----------------------------------------------------------
+
+@app.get('/api/bookings')
+def get_bookings():
+    """
+    GET /api/bookings - Retrieve all bookings
+    
+    Fetches all bookings from the database.
+    Used by admin to view all reservations.
+    
+    Returns:
+        JSON array of all booking objects
+    """
+    # Query all bookings
+    bookings = Booking.query.all()
+    return jsonify([booking.to_dict() for booking in bookings])
+
+@app.post('/api/bookings')
+def create_booking():
+    """
+    POST /api/bookings - Create a new booking
+    
+    Creates a new space reservation with the provided data.
+    
+    Request Body:
+        user_id (required): ID of the user making the booking
+        space_id (required): ID of the space being booked
+        check_in_date (required): Start date of reservation
+        check_out_date (required): End date of reservation
+        total_price (required): Total cost of booking
+        guests (optional): Number of guests (default: 1)
+        status (optional): Booking status (default: 'pending')
+        
+    Returns:
+        201: Created booking object
+        400: Validation error
+    """
+    # Get JSON data from request
+    data = request.get_json()
+    
+    # Validate all required fields are present
+    required_fields = ['user_id', 'space_id', 'check_in_date', 'check_out_date', 'total_price']
+    for field in required_fields:
+        if field not in data:
+            return jsonify({"error": f"Missing field: {field}"}), 400
+    
+    # Create new Booking object
+    new_booking = Booking(
+        user_id=data['user_id'],
+        space_id=data['space_id'],
+        check_in_date=data['check_in_date'],
+        check_out_date=data['check_out_date'],
+        guests=data.get('guests', 1),           # Default to 1 guest
+        total_price=float(data['total_price']),
+        status=data.get('status', 'pending')    # Default to pending
+    )
+    
+    # Add to database and commit
+    db.session.add(new_booking)
+    db.session.commit()
+    
+    # Return created booking with 201 status
+    return jsonify(new_booking.to_dict()), 201
+
+
+@app.get('/api/bookings/<int:id>')
+def get_booking(id):
+    """
+    GET /api/bookings/<id> - Retrieve a single booking
+    
+    Fetches a specific booking by its ID.
+    
+    Args:
+        id: The unique identifier of the booking
+        
+    Returns:
+        JSON object of the booking, or 404 if not found
+    """
+    # Find booking or return 404
+    booking = Booking.query.get_or_404(id)
+    return jsonify(booking.to_dict())
+
+
+@app.put('/api/bookings/<int:id>')
+def update_booking(id):
+    """
+    PUT /api/bookings/<id> - Update a booking
+    
+    Updates a booking with the provided data. Used for
+    changing status, dates, or guest count.
+    
+    Args:
+        id: The unique identifier of the booking to update
+        
+    Request Body:
+        status (optional): New status
+        guests (optional): Updated guest count
+        check_in_date (optional): New check-in date
+        check_out_date (optional): New check-out date
+        
+    Returns:
+        Updated booking object, or 404 if not found
+    """
+    # Find booking or return 404
+    booking = Booking.query.get_or_404(id)
+    data = request.get_json()
+
+    # Update only provided fields
+    if 'status' in data:
+        booking.status = data['status']
+    if 'guests' in data:
+        booking.guests = data['guests']
+    if 'check_in_date' in data:
+        booking.check_in_date = data['check_in_date']
+    if 'check_out_date' in data:
+        booking.check_out_date = data['check_out_date']
+
+    # Commit changes
+    db.session.commit()
+    return jsonify(booking.to_dict())
+
+
+@app.post('/api/bookings/<int:id>/pay')
+def pay_booking(id):
+    """
+    POST /api/bookings/<id>/pay - Process payment for a booking
+    
+    Simulates payment processing for a pending booking.
+    Changes status to 'confirmed' and generates an invoice.
+    
+    Args:
+        id: The unique identifier of the booking to pay
+        
+    Returns:
+        200: Success message with invoice details
+        400: Error if booking is not pending
+        404: Booking not found
+    """
+    # Find booking or return 404
+    booking = Booking.query.get_or_404(id)
+    
+    # Check if booking is in pending status
+    if booking.status != 'pending':
+        return jsonify({"error": "Booking is not pending or has already been processed"}), 400
+
+    # Simulate payment processing - in production, this would integrate
+    # with a real payment gateway like Stripe or PayPal
+    booking.status = 'confirmed'
+    db.session.commit()
+
+    # Generate invoice details
+    invoice = {
+        'invoice_number': f"INV-{booking.id}-{int(datetime.utcnow().timestamp())}",
+        'booking_id': booking.id,
+        'amount': booking.total_price,
+        'paid_at': datetime.utcnow().isoformat()
+    }
+
+    # Return success with invoice
+    return jsonify({"message": "Payment simulated", "invoice": invoice}), 200
