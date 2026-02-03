@@ -744,3 +744,75 @@ def create_review():
     
     # Return created review with 201 status
     return jsonify(new_review.to_dict()), 201
+
+
+# ==================== DATABASE INITIALIZATION ====================
+# This section handles database setup and seeding with sample data
+
+def create_tables():
+    """
+    Initialize the database tables and seed with sample data
+    
+    This function:
+    1. Creates all database tables defined by the models
+    2. Checks if the database is empty
+    3. If empty, adds sample space listings for demo purposes
+    
+    Called when the application starts to ensure the database is ready.
+    """
+    # Use app context for database operations
+    with app.app_context():
+        # Create all tables defined in the models
+        # If tables already exist, this does nothing (safe to call multiple times)
+        db.create_all()
+        
+        # Check if database is empty (no spaces exist)
+        # If empty, seed with sample data for demonstration
+        if Space.query.count() == 0:
+            # Sample spaces data for demonstration
+            # These provide example listings when the app first runs
+            sample_spaces = [
+                # Sample 1: City apartment in New York
+                Space(
+                    title="Modern Apartment",
+                    description="Beautiful apartment in city center",
+                    price_per_night=120.50,
+                    location="New York, NY",
+                    latitude=40.7128,      # NYC coordinates
+                    longitude=-74.0060,
+                    capacity=4,
+                    amenities="WiFi, Kitchen, AC",
+                    image_url="/images/modern-apartment.png"
+                ),
+                # Sample 2: Beach house in Miami
+                Space(
+                    title="Beach House",
+                    description="Luxury beachfront villa",
+                    price_per_night=350.00,
+                    location="Miami, FL",
+                    latitude=25.7617,      # Miami coordinates
+                    longitude=-80.1918,
+                    capacity=8,
+                    amenities="Pool, WiFi, Ocean View",
+                    image_url="/images/beach-house.png"
+                ),
+                # Sample 3: Mountain cabin in Aspen
+                Space(
+                    title="Cozy Mountain Cabin",
+                    description="Rustic wooden cabin perfect for winter getaways",
+                    price_per_night=200.00,
+                    location="Aspen, CO",
+                    latitude=39.1911,      # Aspen coordinates
+                    longitude=-106.8175,
+                    capacity=6,
+                    amenities="Fireplace, Hot Tub, Mountain View",
+                    image_url="/images/mountain-cabin.png"
+                )
+            ]
+            
+            # Add all sample spaces to the database in one operation
+            db.session.add_all(sample_spaces)
+            # Commit the transaction to save changes
+            db.session.commit()
+            # Print confirmation message
+            print("✅ Sample spaces added")
