@@ -304,3 +304,159 @@ def index():
             "reviews": "/api/reviews"
         }
     })
+
+# ----------------------------------------------------------
+# SPACES ROUTES - CRUD operations for rental spaces
+# ----------------------------------------------------------
+
+@app.get('/api/spaces')
+def get_spaces():
+    """
+    GET /api/spaces - Retrieve all spaces
+    
+    Fetches all rental spaces from the database and returns them
+    as a JSON array. Used by the frontend to display space listings.
+    
+    Returns:
+        JSON array of all space objects
+    """
+    # Query all spaces from the database
+    spaces = Space.query.all()
+    # Convert each space to dictionary and return as JSON
+    return jsonify([space.to_dict() for space in spaces])
+
+@app.get('/api/spaces/<int:id>')
+def get_space(id):
+    """
+    GET /api/spaces/<id> - Retrieve a single space by ID
+    
+    Fetches a specific space by its ID. Returns 404 if not found.
+    Used when displaying space details page.
+    
+    Args:
+        id: The unique identifier of the space
+        
+    Returns:
+        JSON object of the space, or 404 error
+    """
+    # get_or_404 returns the space or raises a 404 error if not found
+    space = Space.query.get_or_404(id)
+    return jsonify(space.to_dict())
+
+@app.post('/api/spaces')
+def create_space():
+    """
+    POST /api/spaces - Create a new space listing
+    
+    Creates a new rental space with the provided data.
+    Validates that all required fields are present.
+    
+    Request Body:
+        title (required): Name of the space
+        description (required): Detailed description
+        price_per_night (required): Rental price
+        location (required): Address/location
+        latitude (optional): GPS latitude
+        longitude (optional): GPS longitude
+        capacity (optional): Max guests (default: 2)
+        amenities (optional): Features list
+        image_url (optional): Photo URL
+        
+    Returns:
+        201: Created space object
+        400: Validation error
+    """
+    # Get JSON data from request body
+    data = request.get_json()
+    
+    # Validate required fields are present
+    required_fields = ['title', 'description', 'price_per_night', 'location']
+    for field in required_fields:
+        if field not in data:
+            return jsonify({"error": f"Missing field: {field}"}), 400
+    
+    # Create new Space object with provided data
+    new_space = Space(
+        title=data['title'],
+        description=data['description'],
+        price_per_night=float(data['price_per_night']),
+        location=data['location'],
+        latitude=data.get('latitude'),          # Optional field
+        longitude=data.get('longitude'),        # Optional field
+        capacity=data.get('capacity', 2),       # Default to 2 if not provided
+        amenities=data.get('amenities', ''),    # Default to empty string
+        image_url=data.get('image_url', '')     # Default to empty string
+    )
+    
+    # Add to database session and commit the transaction
+    db.session.add(new_space)
+    db.session.commit()
+    
+    # Return the created space with 201 Created status
+    return jsonify(new_space.to_dict()), 201
+
+@app.put('/api/spaces/<int:id>')
+def update_space(id):
+    """
+    PUT /api/spaces/<id> - Update an existing space
+    
+    Updates a space with the provided data. Only updates
+    fields that are included in the request body.
+    
+    Args:
+        id: The unique identifier of the space to update
+        
+    Request Body:
+        Any space fields to update (all optional)
+        
+    Returns:
+        Updated space object, or 404 if not found
+    """
+    # Find the space or return 404
+    space = Space.query.get_or_404(id)
+    
+    # Get JSON data from request
+    data = request.get_json()
+    
+    # Update only the fields that are provided in the request
+    if 'title' in data:
+        space.title = data['title']
+    if 'description' in data:
+        space.description = data['description']
+    if 'price_per_night' in data:
+        space.price_per_night = float(data['price_per_night'])
+    if 'location' in data:
+        space.location = data['location']
+    if 'latitude' in data:
+        space.latitude = data['latitude']
+    if 'longitude' in data:
+        space.longitude = data['longitude']
+    
+    # Commit the changes to the database
+    db.session.commit()
+    
+    # Return the updated space
+    return jsonify(space.to_dict())
+
+@app.delete('/api/spaces/<int:id>')
+def delete_space(id):
+    """
+    DELETE /api/spaces/<id> - Delete a space
+    
+    Permanently removes a space from the database.
+    
+    Args:
+        id: The unique identifier of the space to delete
+        
+    Returns:
+        Success message, or 404 if not found
+    """
+    # Find the space or return 404
+    space = Space.query.get_or_404(id)
+    
+    # Delete from database
+    db.session.delete(space)
+    db.session.commit()
+    
+    # Return success message
+    return jsonify({"message": "Space deleted successfully"}), 200
