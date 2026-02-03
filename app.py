@@ -460,3 +460,64 @@ def delete_space(id):
     
     # Return success message
     return jsonify({"message": "Space deleted successfully"}), 200
+
+
+
+# ----------------------------------------------------------
+# USERS ROUTES - User management endpoints
+# ----------------------------------------------------------
+
+@app.get('/api/users')
+def get_users():
+    """
+    GET /api/users - Retrieve all users
+    
+    Fetches all registered users from the database.
+    Used by admin panel to view user list.
+    
+    Returns:
+        JSON array of all user objects (without passwords)
+    """
+    # Query all users from database
+    users = User.query.all()
+    # Convert to JSON (to_dict excludes password_hash)
+    return jsonify([user.to_dict() for user in users])
+
+@app.post('/api/users')
+def create_user():
+    """
+    POST /api/users - Register a new user
+    
+    Creates a new user account with the provided data.
+    
+    Request Body:
+        username (required): Unique username
+        email (required): Unique email address
+        full_name (optional): User's full name
+        profile_picture (optional): Profile image URL
+        
+    Returns:
+        201: Created user object
+        400: Validation error
+    """
+    # Get JSON data from request
+    data = request.get_json()
+    
+    # Validate required fields
+    if 'username' not in data or 'email' not in data:
+        return jsonify({"error": "Username and email are required"}), 400
+    
+    # Create new User object
+    new_user = User(
+        username=data['username'],
+        email=data['email'],
+        full_name=data.get('full_name', ''),
+        profile_picture=data.get('profile_picture', '')
+    )
+    
+    # Add to database and commit
+    db.session.add(new_user)
+    db.session.commit()
+    
+    # Return created user with 201 status
+    return jsonify(new_user.to_dict()), 201
