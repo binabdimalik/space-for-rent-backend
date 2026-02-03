@@ -685,3 +685,62 @@ def pay_booking(id):
 
     # Return success with invoice
     return jsonify({"message": "Payment simulated", "invoice": invoice}), 200
+
+
+# ----------------------------------------------------------
+# REVIEWS ROUTES - Review management endpoints
+# ----------------------------------------------------------
+
+@app.get('/api/reviews')
+def get_reviews():
+    """
+    GET /api/reviews - Retrieve all reviews
+    
+    Fetches all reviews from the database.
+    
+    Returns:
+        JSON array of all review objects
+    """
+    # Query all reviews
+    reviews = Review.query.all()
+    return jsonify([review.to_dict() for review in reviews])
+
+@app.post('/api/reviews')
+def create_review():
+    """
+    POST /api/reviews - Create a new review
+    
+    Creates a new review for a space. Users can rate
+    and comment on spaces they've booked.
+    
+    Request Body:
+        user_id (required): ID of the user writing the review
+        space_id (required): ID of the space being reviewed
+        rating (required): Star rating (1-5)
+        comment (optional): Written review text
+        
+    Returns:
+        201: Created review object
+        400: Validation error
+    """
+    # Get JSON data from request
+    data = request.get_json()
+    
+    # Validate required fields
+    if 'user_id' not in data or 'space_id' not in data or 'rating' not in data:
+        return jsonify({"error": "user_id, space_id, and rating are required"}), 400
+    
+    # Create new Review object
+    new_review = Review(
+        user_id=data['user_id'],
+        space_id=data['space_id'],
+        rating=data['rating'],
+        comment=data.get('comment', '')  # Default to empty string
+    )
+    
+    # Add to database and commit
+    db.session.add(new_review)
+    db.session.commit()
+    
+    # Return created review with 201 status
+    return jsonify(new_review.to_dict()), 201
