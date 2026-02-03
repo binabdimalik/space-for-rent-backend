@@ -55,3 +55,60 @@ db = SQLAlchemy(app)
 # Initialize Flask-Migrate for database migrations
 # Allows running 'flask db migrate' and 'flask db upgrade' commands
 migrate = Migrate(app, db)
+
+
+# ==================== DATABASE MODELS ====================
+# Models define the structure of database tables using Python classes
+# Each class represents a table, and each attribute represents a column
+
+# ----------------------------------------------------------
+# 1. USER MODEL - Stores user account information
+# ----------------------------------------------------------
+class User(db.Model):
+    """
+    User Model - Represents registered users of the platform
+    
+    Users can:
+    - Book rental spaces
+    - Leave reviews for spaces they've stayed at
+    - Have a profile with personal information
+    """
+    # Define the table name in the database
+    __tablename__ = 'users'
+    
+    # Primary key - unique identifier for each user
+    id = db.Column(db.Integer, primary_key=True)
+    
+    # Username - must be unique, used for login
+    username = db.Column(db.String(80), unique=True, nullable=False)
+    
+    # Email address - must be unique, used for communication
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    
+    # Full name - display name for the user
+    full_name = db.Column(db.String(100))
+    
+    # Profile picture URL - optional profile image
+    profile_picture = db.Column(db.String(200))
+    
+    # Password hash - securely stored password (never store plain text!)
+    password_hash = db.Column(db.String(200))
+    
+    # Relationships - define connections to other tables
+    # backref creates a reverse reference (booking.user, review.user)
+    # lazy=True means related items are loaded on demand
+    bookings = db.relationship('Booking', backref='user', lazy=True)
+    reviews = db.relationship('Review', backref='user', lazy=True)
+    
+    def to_dict(self):
+        """
+        Convert User object to dictionary for JSON serialization
+        Note: password_hash is intentionally excluded for security
+        """
+        return {
+            'id': self.id,
+            'username': self.username,
+            'email': self.email,
+            'full_name': self.full_name,
+            'profile_picture': self.profile_picture
+        }
