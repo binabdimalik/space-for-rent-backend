@@ -179,3 +179,56 @@ class Space(db.Model):
             'amenities': self.amenities,
             'image_url': self.image_url
         }
+
+# ----------------------------------------------------------
+# 3. BOOKING MODEL - Stores reservation information
+# ----------------------------------------------------------
+class Booking(db.Model):
+    """
+    Booking Model - Represents space reservations
+    
+    Links users to spaces with:
+    - Check-in and check-out dates
+    - Number of guests
+    - Total price
+    - Booking status (pending, confirmed, cancelled)
+    """
+    # Define the table name in the database
+    __tablename__ = 'bookings'
+    
+    # Primary key - unique identifier for each booking
+    id = db.Column(db.Integer, primary_key=True)
+    
+    # Foreign key to users table - who made the booking
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    
+    # Foreign key to spaces table - which space was booked
+    space_id = db.Column(db.Integer, db.ForeignKey('spaces.id'), nullable=False)
+    
+    # Reservation dates (stored as strings for simplicity)
+    check_in_date = db.Column(db.String(50), nullable=False)
+    check_out_date = db.Column(db.String(50), nullable=False)
+    
+    # Number of guests for this booking
+    guests = db.Column(db.Integer, default=1)
+    
+    # Total cost of the booking
+    total_price = db.Column(db.Float, nullable=False)
+    
+    # Booking status: 'pending', 'confirmed', or 'cancelled'
+    status = db.Column(db.String(20), default='pending')
+    
+    def to_dict(self):
+        """
+        Convert Booking object to dictionary for JSON serialization
+        """
+        return {
+            'id': self.id,
+            'user_id': self.user_id,
+            'space_id': self.space_id,
+            'check_in_date': self.check_in_date,
+            'check_out_date': self.check_out_date,
+            'guests': self.guests,
+            'total_price': self.total_price,
+            'status': self.status
+        }
