@@ -112,3 +112,70 @@ class User(db.Model):
             'full_name': self.full_name,
             'profile_picture': self.profile_picture
         }
+    
+
+# ----------------------------------------------------------
+# 2. SPACE MODEL - Stores rental space listings
+# ----------------------------------------------------------
+class Space(db.Model):
+    """
+    Space Model - Represents rental spaces available on the platform
+    
+    Each space has:
+    - Basic info (title, description, location)
+    - Pricing information
+    - Geographic coordinates for map display
+    - Capacity and amenities
+    """
+    # Define the table name in the database
+    __tablename__ = 'spaces'
+    
+    # Primary key - unique identifier for each space
+    id = db.Column(db.Integer, primary_key=True)
+    
+    # Title - name of the space (e.g., "Modern Meeting Room")
+    title = db.Column(db.String(100), nullable=False)
+    
+    # Description - detailed information about the space
+    description = db.Column(db.Text, nullable=False)
+    
+    # Price per night - rental cost in dollars
+    price_per_night = db.Column(db.Float, nullable=False)
+    
+    # Location - address or area description
+    location = db.Column(db.String(100), nullable=False)
+    
+    # Geographic coordinates for map display
+    latitude = db.Column(db.Float)   # North-South position
+    longitude = db.Column(db.Float)  # East-West position
+    
+    # Capacity - maximum number of guests/people
+    capacity = db.Column(db.Integer, default=2)
+    
+    # Amenities - comma-separated list of features (WiFi, Kitchen, etc.)
+    amenities = db.Column(db.Text)
+    
+    # Image URL - photo of the space
+    image_url = db.Column(db.String(200))
+    
+    # Relationships to bookings and reviews
+    bookings = db.relationship('Booking', backref='space', lazy=True)
+    reviews = db.relationship('Review', backref='space', lazy=True)
+    
+    def to_dict(self):
+        """
+        Convert Space object to dictionary for JSON serialization
+        Used when sending space data to the frontend
+        """
+        return {
+            'id': self.id,
+            'title': self.title,
+            'description': self.description,
+            'price_per_night': self.price_per_night,
+            'location': self.location,
+            'latitude': self.latitude,
+            'longitude': self.longitude,
+            'capacity': self.capacity,
+            'amenities': self.amenities,
+            'image_url': self.image_url
+        }
