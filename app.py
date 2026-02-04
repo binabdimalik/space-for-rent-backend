@@ -215,13 +215,7 @@ class Booking(db.Model):
 # 4. REVIEW MODEL - Stores user reviews and ratings
 # ----------------------------------------------------------
 class Review(db.Model):
-    """
-    Review Model - Represents user reviews for spaces
-    
-    Allows users to:
-    - Rate spaces (1-5 stars)
-    - Leave written comments about their experience
-    """
+  
     # Define the table name in the database
     __tablename__ = 'reviews'
     
