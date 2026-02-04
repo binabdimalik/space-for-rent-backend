@@ -65,14 +65,7 @@ migrate = Migrate(app, db)
 # 1. USER MODEL - Stores user account information
 # ----------------------------------------------------------
 class User(db.Model):
-    """
-    User Model - Represents registered users of the platform
-    
-    Users can:
-    - Book rental spaces
-    - Leave reviews for spaces they've stayed at
-    - Have a profile with personal information
-    """
+   
     # Define the table name in the database
     __tablename__ = 'users'
     
