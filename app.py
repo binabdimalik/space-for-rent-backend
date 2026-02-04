@@ -169,15 +169,7 @@ class Space(db.Model):
 # 3. BOOKING MODEL - Stores reservation information
 # ----------------------------------------------------------
 class Booking(db.Model):
-    """
-    Booking Model - Represents space reservations
-    
-    Links users to spaces with:
-    - Check-in and check-out dates
-    - Number of guests
-    - Total price
-    - Booking status (pending, confirmed, cancelled)
-    """
+   
     # Define the table name in the database
     __tablename__ = 'bookings'
     
