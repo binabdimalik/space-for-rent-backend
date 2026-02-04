@@ -65,14 +65,7 @@ migrate = Migrate(app, db)
 # 1. USER MODEL - Stores user account information
 # ----------------------------------------------------------
 class User(db.Model):
-    """
-    User Model - Represents registered users of the platform
-    
-    Users can:
-    - Book rental spaces
-    - Leave reviews for spaces they've stayed at
-    - Have a profile with personal information
-    """
+   
     # Define the table name in the database
     __tablename__ = 'users'
     
@@ -118,15 +111,7 @@ class User(db.Model):
 # 2. SPACE MODEL - Stores rental space listings
 # ----------------------------------------------------------
 class Space(db.Model):
-    """
-    Space Model - Represents rental spaces available on the platform
     
-    Each space has:
-    - Basic info (title, description, location)
-    - Pricing information
-    - Geographic coordinates for map display
-    - Capacity and amenities
-    """
     # Define the table name in the database
     __tablename__ = 'spaces'
     
@@ -184,15 +169,7 @@ class Space(db.Model):
 # 3. BOOKING MODEL - Stores reservation information
 # ----------------------------------------------------------
 class Booking(db.Model):
-    """
-    Booking Model - Represents space reservations
-    
-    Links users to spaces with:
-    - Check-in and check-out dates
-    - Number of guests
-    - Total price
-    - Booking status (pending, confirmed, cancelled)
-    """
+   
     # Define the table name in the database
     __tablename__ = 'bookings'
     
@@ -238,13 +215,7 @@ class Booking(db.Model):
 # 4. REVIEW MODEL - Stores user reviews and ratings
 # ----------------------------------------------------------
 class Review(db.Model):
-    """
-    Review Model - Represents user reviews for spaces
-    
-    Allows users to:
-    - Rate spaces (1-5 stars)
-    - Leave written comments about their experience
-    """
+  
     # Define the table name in the database
     __tablename__ = 'reviews'
     
