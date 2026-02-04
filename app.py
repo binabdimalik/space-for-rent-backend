@@ -111,15 +111,7 @@ class User(db.Model):
 # 2. SPACE MODEL - Stores rental space listings
 # ----------------------------------------------------------
 class Space(db.Model):
-    """
-    Space Model - Represents rental spaces available on the platform
     
-    Each space has:
-    - Basic info (title, description, location)
-    - Pricing information
-    - Geographic coordinates for map display
-    - Capacity and amenities
-    """
     # Define the table name in the database
     __tablename__ = 'spaces'
     
