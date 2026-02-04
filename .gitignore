@@ -118,3 +118,4 @@ tmp/
 *.pdf
 EOF
 #done
+migrations/env.py
