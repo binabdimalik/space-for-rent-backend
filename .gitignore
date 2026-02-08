@@ -117,3 +117,5 @@ tmp/
 *.xlsx
 *.pdf
 EOF
+#done
+migrations/env.py
