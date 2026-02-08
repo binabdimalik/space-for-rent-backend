@@ -1,3 +1,18 @@
+"""
+app.py - Spaces for Rent Backend API
+
+This is the main Flask application file that serves as the backend API
+for the Spaces for Rent platform. It provides RESTful endpoints for:
+- User management (registration, authentication)
+- Space listings (CRUD operations for rental spaces)
+- Booking management (create, update, cancel bookings)
+- Review system (ratings and comments for spaces)
+
+The API uses SQLAlchemy ORM for database operations and supports
+both SQLite (development) and PostgreSQL (production) databases.
+"""
+
+# ==================== IMPORTS ====================
 
 # Flask - The main web framework for building the API
 from flask import Flask, jsonify, request
@@ -56,7 +71,6 @@ db = SQLAlchemy(app)
 # Allows running 'flask db migrate' and 'flask db upgrade' commands
 migrate = Migrate(app, db)
 
-
 # ==================== DATABASE MODELS ====================
 # Models define the structure of database tables using Python classes
 # Each class represents a table, and each attribute represents a column
@@ -65,7 +79,14 @@ migrate = Migrate(app, db)
 # 1. USER MODEL - Stores user account information
 # ----------------------------------------------------------
 class User(db.Model):
-   
+    """
+    User Model - Represents registered users of the platform
+    
+    Users can:
+    - Book rental spaces
+    - Leave reviews for spaces they've stayed at
+    - Have a profile with personal information
+    """
     # Define the table name in the database
     __tablename__ = 'users'
     
@@ -105,13 +126,20 @@ class User(db.Model):
             'full_name': self.full_name,
             'profile_picture': self.profile_picture
         }
-    
 
 # ----------------------------------------------------------
 # 2. SPACE MODEL - Stores rental space listings
 # ----------------------------------------------------------
 class Space(db.Model):
+    """
+    Space Model - Represents rental spaces available on the platform
     
+    Each space has:
+    - Basic info (title, description, location)
+    - Pricing information
+    - Geographic coordinates for map display
+    - Capacity and amenities
+    """
     # Define the table name in the database
     __tablename__ = 'spaces'
     
@@ -169,7 +197,15 @@ class Space(db.Model):
 # 3. BOOKING MODEL - Stores reservation information
 # ----------------------------------------------------------
 class Booking(db.Model):
-   
+    """
+    Booking Model - Represents space reservations
+    
+    Links users to spaces with:
+    - Check-in and check-out dates
+    - Number of guests
+    - Total price
+    - Booking status (pending, confirmed, cancelled)
+    """
     # Define the table name in the database
     __tablename__ = 'bookings'
     
@@ -209,13 +245,18 @@ class Booking(db.Model):
             'total_price': self.total_price,
             'status': self.status
         }
-    
 
 # ----------------------------------------------------------
 # 4. REVIEW MODEL - Stores user reviews and ratings
 # ----------------------------------------------------------
 class Review(db.Model):
-  
+    """
+    Review Model - Represents user reviews for spaces
+    
+    Allows users to:
+    - Rate spaces (1-5 stars)
+    - Leave written comments about their experience
+    """
     # Define the table name in the database
     __tablename__ = 'reviews'
     
@@ -245,7 +286,6 @@ class Review(db.Model):
             'rating': self.rating,
             'comment': self.comment
         }
-
 
 # ==================== API ROUTES ====================
 # Routes define the API endpoints that the frontend can call
@@ -432,8 +472,6 @@ def delete_space(id):
     # Return success message
     return jsonify({"message": "Space deleted successfully"}), 200
 
-
-
 # ----------------------------------------------------------
 # USERS ROUTES - User management endpoints
 # ----------------------------------------------------------
@@ -492,7 +530,6 @@ def create_user():
     
     # Return created user with 201 status
     return jsonify(new_user.to_dict()), 201
-
 
 # ----------------------------------------------------------
 # BOOKINGS ROUTES - Reservation management endpoints
@@ -657,7 +694,6 @@ def pay_booking(id):
     # Return success with invoice
     return jsonify({"message": "Payment simulated", "invoice": invoice}), 200
 
-
 # ----------------------------------------------------------
 # REVIEWS ROUTES - Review management endpoints
 # ----------------------------------------------------------
@@ -715,7 +751,6 @@ def create_review():
     
     # Return created review with 201 status
     return jsonify(new_review.to_dict()), 201
-
 
 # ==================== DATABASE INITIALIZATION ====================
 # This section handles database setup and seeding with sample data

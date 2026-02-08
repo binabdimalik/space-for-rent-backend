@@ -1,3 +1,15 @@
+"""
+models/space.py - Space Model Definition (Alternative)
+
+This file contains an alternative/simplified Space model definition.
+Note: The main application uses the Space model defined in app.py,
+which has additional fields for the complete rental platform.
+
+This file demonstrates a modular approach to organizing models
+in separate files within a models package.
+"""
+
+# Import the database instance from the main app
 from app import db
 
 
