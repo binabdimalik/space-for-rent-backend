@@ -153,8 +153,13 @@ git merge origin/main
 
 ## 👤 Author
 
+**Abdimalik Kulow**
 **Peter Emu**
-Junior Software Engineer
+**Elly Owuor**
+**Yvonne Kajuju**
+**Ephraihim Anyanje**
+	
+
 
 ---
 
