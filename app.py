@@ -527,7 +527,7 @@ def create_booking():
         check_out_date (required): End date of reservation
         total_price (required): Total cost of booking
         guests (optional): Number of guests (default: 1)
-        status (optional): Booking status (default: 'pending')
+        status (optional): Booking status (cddefault: 'pending')
         
     Returns:
         201: Created booking object
