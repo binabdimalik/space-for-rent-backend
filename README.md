@@ -9,7 +9,11 @@
 
 **RESTful API backend for the Spaces for Rent platform**
 
-[Frontend Repo](https://github.com/binabdimalik/space-for-rent--frontend) · [API Docs](#-api-endpoints) · [Report Bug](https://github.com/binabdimalik/space-for-rent-backend/issues)
+[![Live Demo](https://img.shields.io/badge/🌐_Live_Demo-rentalhub.dpdns.org-00C853?style=for-the-badge)](https://rentalhub.dpdns.org)
+
+[🚀 Live Demo](https://rentalhub.dpdns.org) · [Frontend Repo](https://github.com/binabdimalik/space-for-rent--frontend) · [API Docs](#-api-endpoints) · [Report Bug](https://github.com/binabdimalik/space-for-rent-backend/issues)
+
+> **Deployed on Ubuntu 24.04 VPS with Gunicorn, Nginx, and Cloudflare**
 
 </div>
 
